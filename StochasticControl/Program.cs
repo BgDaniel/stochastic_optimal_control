@@ -18,7 +18,7 @@ namespace StochasticControl
 
             var optimalController = new OptimalController(paths, options.NbDiscr, gbm, options.QMin, options.QMax, options.Qmin,
                 options.Qmax, options.StepsQ);
-            optimalController.Control();
+            var J = optimalController.Control();
 
         }
     }

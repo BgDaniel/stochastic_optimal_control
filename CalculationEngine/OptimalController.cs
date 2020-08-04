@@ -9,7 +9,7 @@ namespace CalculationEngine
 {
     public class OptimalController
     {
-        private double[][] m_paths;
+        private double[][] m_paths;        
         private double[][] m_discretization;
         private double[][][] m_transitionProb;
         private int m_stepsS;
@@ -20,6 +20,8 @@ namespace CalculationEngine
         private double m_qmax;
         private int m_stepsQ;
         private double m_dQ;
+
+        public double[][] PathIndices { private set; get; }
 
         public OptimalController(double[][] paths, int nbDiscr, GeometricBrownianMotion gbm, double Qmin, double Qmax, double qmin,
             double qmax, int stepsQ)
@@ -44,6 +46,7 @@ namespace CalculationEngine
             int nbSteps = m_gbm.NbSteps;
 
             m_discretization = new double[nbSteps][];
+            PathIndices = new double[nbSteps][];
 
             for (int i_time = 1; i_time < nbSteps; i_time++)
             {
@@ -58,6 +61,20 @@ namespace CalculationEngine
                 for (int j_disc = 0; j_disc < m_stepsS + 1; j_disc++)
                 {
                     m_discretization[i_time][j_disc] = s_min + j_disc * delta;
+                }
+
+                PathIndices[i_time] = new double[nbSimus];
+
+                for (int i_simu = 0; i_simu < nbSimus; i_simu++)
+                {
+                    for (int j_disc = 0; j_disc < m_stepsS + 1; j_disc++)
+                    {
+                        if (m_discretization[i_time][j_disc] <= m_paths[i_time][i_simu] 
+                            && m_paths[i_time][i_simu] < m_discretization[i_time][j_disc+1])
+                        {
+                            PathIndices[i_time][i_simu] = j_disc;
+                        }
+                    }
                 }
             }
         }
@@ -120,7 +137,7 @@ namespace CalculationEngine
             }
         }
 
-        public void Control()
+        public HJBContainer[][][] Control()
         {
             int nbSteps = m_gbm.NbSteps;
 
@@ -140,7 +157,7 @@ namespace CalculationEngine
             {
                 for (int i_S = 0; i_S < m_stepsS; i_S++)
                 {
-                    J[nbSteps - 2][j_Q][i_S] = new HJBContainer(.0, null, null);
+                    J[nbSteps - 2][j_Q][i_S] = new HJBContainer(.0, null, null, null);
                 }
             }
             
@@ -160,7 +177,7 @@ namespace CalculationEngine
                             }
                         }
 
-                        var _J = new HJBContainer(double.MinValue, null, null);
+                        var _J = new HJBContainer(double.MinValue, null, null, null);
 
                         foreach (var next_Q in next_Qs)
                         {
@@ -175,7 +192,7 @@ namespace CalculationEngine
                             
                             if (value_next > _J.Value)
                             {
-                                _J = new HJBContainer(value_next, m_qmin + next_Q * m_dQ, next_Q);
+                                _J = new HJBContainer(value_next, m_qmin + next_Q * m_dQ, next_Q, (next_Q - k_Q) * m_dQ);
                             }                            
                         }
 
@@ -183,6 +200,7 @@ namespace CalculationEngine
                     }
                 }
             }
+            return J;
         }
     }
 }
