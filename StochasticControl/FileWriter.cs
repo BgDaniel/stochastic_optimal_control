@@ -4,30 +4,27 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Windows;
 
 namespace StochasticControl
 {
     public class FileWriter
     {
-        public string PathToFolder;
         public string FileName;
 
-        public FileWriter(string pathToFolder, string fileName)
+        public FileWriter(string fileName)
         {
-            PathToFolder = pathToFolder;
             FileName = fileName;
         }
 
         public void WriteToFile(QStep[] qSteps)
         {
-            var engine = new FileHelperEngine<QStep>
-            {
-                HeaderText = typeof(QStep).GetCsvHeader();
-            };
+            var engine = new FileHelperEngine<QStep>();
 
-            var stringBuilder = new StringBuilder(PathToFolder);
-            stringBuilder.Append(FileName);
-            var fullPath = stringBuilder.ToString();
+            string workingDirectory = Environment.CurrentDirectory;
+            string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
+
+            var fullPath = Path.Combine(new string[] { projectDirectory, "Data", FileName });
             
             if (File.Exists(fullPath))
                 File.Delete(fullPath);
