@@ -39,8 +39,8 @@ namespace CalculationEngine
             m_grid = new double[NbTimes][];
             m_grid[0] = new double[] { m_S0 };
 
-            m_paths = new double[NbTimes][];
-            m_pathIndices = new int[NbTimes][];
+            m_paths = new double[NbSimus][];
+            m_pathIndices = new int[NbSimus][];
 
             var rnd = new Random();
 
@@ -49,16 +49,21 @@ namespace CalculationEngine
                 m_grid[iTime] = new double[iTime + 1];
 
                 for (int jS = 0; jS < iTime + 1; jS++)
-                    m_grid[iTime][jS] = m_S0 * m_u.Pow(iTime - jS) * m_d.Pow(jS);
+                    m_grid[iTime][jS] = m_S0 * m_u.Pow(iTime - jS) * m_d.Pow(jS);                                      
+            }
 
-                m_paths[iTime] = new double[m_nbSimus];
-                m_pathIndices[iTime] = new int[m_nbSimus];
+            for(int iSimu = 0; iSimu < NbSimus; iSimu++)
+            {
+                m_paths[iSimu] = new double[NbTimes];
+                m_paths[iSimu][0] = m_S0;
+                m_pathIndices[iSimu] = new int[NbTimes];
+                m_pathIndices[iSimu][0] = 0;
 
-                for (int iSimu = 0; iSimu < m_nbSimus; iSimu++)
+                for (int iTime = 1; iTime < NbTimes; iTime++)
                 {
-                    m_pathIndices[iTime][iSimu] = m_pathIndices[iTime-1][iSimu] + rnd.Next(0, 2);
-                    m_paths[iTime][iSimu] = m_grid[iTime][m_pathIndices[iTime][iSimu]];
-                }                                   
+                    m_pathIndices[iSimu][iTime] = m_pathIndices[iSimu][iTime - 1] + rnd.Next(0, 2);
+                    m_paths[iSimu][iTime] = m_grid[iTime][m_pathIndices[iSimu][iTime]];
+                }
             }
         }
 

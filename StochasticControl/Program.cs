@@ -16,11 +16,11 @@ namespace StochasticControl
 
         private static void Execute(Options options)
         {
-            //var model = new BinomialTree(options.S0, options.NbTimes, options.T, options.Sigma, options.R);
+            var model = new BinomialTree(options.S0, options.NbTimes, options.T, options.Sigma, options.R, options.NbSimus);
 
             Func<double, double> deterministicPath = t => 2.0 - .5 * t + .25 * Math.Sin(4.0 * Math.PI * t); 
 
-            var model = new DeterministicPath(deterministicPath, 200, 2.0);
+            //var model = new DeterministicPath(deterministicPath, 200, 2.0);
             model.Simulate();
 
             var QSpace = options.CreateQSpace();
