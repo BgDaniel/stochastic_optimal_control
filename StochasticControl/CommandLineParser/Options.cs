@@ -11,7 +11,7 @@ namespace StochasticControl.CommandLineParser
         public double T { get; set; }
 
         [Option('m', "steps", Required = false, Default = 100, HelpText = "Number of steps in time")]
-        public int NbSteps { get; set; }
+        public int NbTimes { get; set; }
 
         [Option('s', "sigma", Required = true, HelpText = "Sigma")]
         public double Sigma { get; set; }

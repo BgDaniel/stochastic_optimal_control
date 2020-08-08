@@ -7,17 +7,13 @@ namespace CalculationEngine
 {
     public interface IStochModel
     {
-        int NbSteps { get; }
+        int NbTimes { get; }
 
-        double[][] GeneratePaths();
-
-        IEnumerable<double> S(int iTme);
-
-        IEnumerable<int> SNext(int iTme);
+        IEnumerable<int> SNext(int jS, int iTime);
 
         double TransitionProbability(int iTime, int jS, int kS);
 
-        double[][] GridS { get; }
+        double[][] Paths { get; }
 
         double[][] Simulate();
     }

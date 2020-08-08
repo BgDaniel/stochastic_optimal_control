@@ -15,7 +15,7 @@ namespace StochasticControl
 
         private static void Execute(Options options)
         {            
-            var model = new BinomialTree();
+            var model = new BinomialTree(options.S0, options.NbTimes, options.T, options.Sigma, options.R);
 
             var QSpace = options.CreateQSpace();
 

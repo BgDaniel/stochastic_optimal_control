@@ -39,32 +39,32 @@ namespace CalculationEngine
 
         public OptimalValues[][][] Control()
         {
-            int nbSteps = m_model.NbSteps;
-            double[][] S = m_model.GridS;
+            int nbTimes = m_model.NbTimes;
+            double[][] paths = m_model.Paths;
 
-            var optimalValues = new OptimalValues[nbSteps][][];
+            var optimalValues = new OptimalValues[nbTimes][][];
 
-            for (int iTime = 0; iTime < nbSteps; iTime++)
+            for (int iTime = 0; iTime < nbTimes; iTime++)
             {
                 optimalValues[iTime] = new OptimalValues[m_nbStepsQ][];
 
-                var nbS = m_model.S(iTime).Count();
+                var nbS = paths[iTime].Length;
 
                 for (int jQ = 0; jQ < m_nbStepsQ; jQ++)
                     optimalValues[iTime][jQ] = new OptimalValues[nbS];                
             }
 
-            var nbSLast = m_model.S(nbSteps).Count();
+            var nbSLast = paths[nbTimes].Length;
 
             for (int jQ = 0; jQ < m_nbStepsQ; jQ++)
             {
                 for (int iS = 0; iS < nbSLast; iS++)
-                    optimalValues[nbSteps - 2][jQ][iS] = new OptimalValues(.0, null, null, null);                
+                    optimalValues[nbTimes - 2][jQ][iS] = new OptimalValues(.0, null, null, null);                
             }
             
-            for (int iTime = nbSteps - 2; iTime > 0; iTime--)
+            for (int iTime = nbTimes - 2; iTime > 0; iTime--)
             {
-                for (int jS = 0; jS < m_model.S(iTime).Count(); jS++)
+                for (int jS = 0; jS < paths[iTime].Length; jS++)
                 {
                     for (int kS = 0; kS < m_nbStepsQ; kS++)
                     {
@@ -82,10 +82,10 @@ namespace CalculationEngine
                         {
                             var expectation = .0;
 
-                            foreach(var mS in m_model.SNext(iTime + 1))
+                            foreach(var mS in m_model.SNext(jS, iTime))
                                 expectation += m_model.TransitionProbability(iTime, jS, mS) * optimalValues[iTime + 1][nextQ][mS].Value;
 
-                            var value_next = - nextQ * m_dQ * S[iTime][jS] + expectation;
+                            var value_next = - nextQ * m_dQ * paths[iTime][jS] + expectation;
                             
                             if (value_next > optimalStep.Value)
                                 optimalStep = new OptimalValues(value_next, m_qMin + nextQ * m_dQ, nextQ, (nextQ - kS) * m_dQ);                                                       
