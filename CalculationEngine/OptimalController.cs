@@ -102,32 +102,33 @@ namespace CalculationEngine
             }
         }
 
-        public (double[], double[], double[], double[]) RollOut(int iPath, double Q0)
+        public QStep[] RollOut(int iPath, double Q0)
         {
             var nbTimes = m_model.NbTimes;
-            var valueProcess = new double[nbTimes];
-            
-            var Q = new double[nbTimes];
-            Q[0] = Q0;
+            var qSteps = new QStep[nbTimes];
+
+            double value;
+            double Q = Q0;
             var indexQ = m_qSpace.Q(Q0);
 
-            var q = new double[nbTimes];
-            var S = m_model.Paths[iPath];
+            double dQ;
             var pathIndices = m_model.PathIndices[iPath];
 
             for(int iTime = 0; iTime < nbTimes; iTime++)
             {
-                valueProcess[iTime] = m_optimalValues[iTime][indexQ][pathIndices[iTime]].Value;
+                value = m_optimalValues[iTime][indexQ][pathIndices[iTime]].Value;
                 
                 if(iTime != 0)
-                    Q[iTime] = m_optimalValues[iTime][indexQ][pathIndices[iTime]].Q;
+                    Q = m_optimalValues[iTime][indexQ][pathIndices[iTime]].Q;
 
-                q[iTime] = m_optimalValues[iTime][indexQ][pathIndices[iTime]].Dq;
+                dQ = m_optimalValues[iTime][indexQ][pathIndices[iTime]].Dq;
 
                 indexQ = m_optimalValues[iTime][indexQ][pathIndices[iTime]].QIndexNext;
+
+                qSteps[iTime] = new QStep(value, Q, dQ, m_model.Paths[iPath][iTime]);
             }
 
-            return (valueProcess, Q, q, S);
+            return qSteps;
         }
     }
 }

@@ -46,6 +46,9 @@ namespace StochasticControl.CommandLineParser
         [Option('y', "StepsQ", Required = true, HelpText = "dQ")]
         public int NbStepsQ { get; set; }
 
+        [Option('p', "Path", Required = true, HelpText = "Path to file")]
+        public string Path { get; set; }
+
         public QSpace CreateQSpace()
         {
             return new QSpace(QMin, QMax, DeltaQMin, DeltaQMax, NbStepsQ);
