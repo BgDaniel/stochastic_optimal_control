@@ -6,7 +6,7 @@ dt = .01
 t = np.arange(0, t, dt)  
 nb_t = len(t)
 
-S = 0.1 * np.sin(4.0 * np.pi * t) + 0.2 + .6 * t * t + 0.05 * np.cos(8.0 * np.pi * t)
+S = -0.1 * np.sin(4.0 * np.pi * t) + 2.0 - .5 *t
 
 
 q_min = - 0.10

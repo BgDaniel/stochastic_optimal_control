@@ -10,19 +10,22 @@ namespace StochasticControl
 {
     public class RollOut
     {
-        private HJBContainer[][][] m_J;
+        private CalculationEngine.OptimalStep[][][] m_J;
         private int[][] m_pathIndices;
         private double[][] m_paths;
         private GeometricBrownianMotion m_gbm;
-        private double m_Q0;
+        private int m_iQ0;
+        private OptimalController m_optimalController;
 
-        public RollOut(HJBContainer[][][] J, double[][] paths, int[][] pathIndices, GeometricBrownianMotion gbm, double Q0)
+        public RollOut(CalculationEngine.OptimalStep[][][] J, double[][] paths, int[][] pathIndices, GeometricBrownianMotion gbm,
+            int iQ0, OptimalController optimalController)
         {
             m_J = J;
             m_paths = paths;
             m_pathIndices = pathIndices;
             m_gbm = gbm;
-            m_Q0 = Q0;
+            m_iQ0 = iQ0;
+            m_optimalController = optimalController;
         }
 
         public void WriteToFile(string pathToFolder, List<int> simus)
@@ -33,8 +36,8 @@ namespace StochasticControl
             {
                 var pathRolledOut = new List<OptimalStep>();
 
-                var _Q = m_Q0;
-                var _iQ = 0;
+                var _Q = m_optimalController.Q(m_iQ0);
+                var _iQ = m_iQ0;
 
                 for (int j_time = 0; j_time < nbSteps; j_time++)
                 {
@@ -49,13 +52,8 @@ namespace StochasticControl
 
                 var engine = new FileHelperEngine(typeof(OptimalStep));
                 engine.HeaderText = engine.GetFileHeader();
-                engine.WriteFile(path, pathRolledOut);
+                engine.WriteFile(pathToFolder + string.Format("\\simulation_{0}.csv", i_simu + 1), pathRolledOut);
             }
-        }
-
-        private void WriteToFile(string path)
-        {
-
         }
     }
 }

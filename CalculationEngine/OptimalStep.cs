@@ -4,14 +4,14 @@ using System.Text;
 
 namespace CalculationEngine
 {
-    public struct HJBContainer
+    public struct OptimalStep
     {
         public double Value;
         public double? QNext;
         public int? QIndexNext;
         public double? Dq;            
 
-        public HJBContainer(double value, double? qNext, int? qIndexNext, double? dq)
+        public OptimalStep(double value, double? qNext, int? qIndexNext, double? dq)
         {
             Value = value;
             QNext = qNext;
