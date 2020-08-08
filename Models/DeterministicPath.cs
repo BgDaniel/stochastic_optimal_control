@@ -9,23 +9,29 @@ namespace Models
     {
         private Func<double, double> m_path;
 
-        public DeterministicPath(Func<double, double> path, int nbTimes, double T) : base(path(0), nbTimes, T)
+        public DeterministicPath(Func<double, double> path, int nbTimes, double T) : base(path(0), nbTimes, T, 0)
         {
             m_path = path;
         }
 
-        public int NbTimes => m_nbTimes;
+        public double[][] Grid => m_grid;
 
-        public double[][] Simulate()
+        public double[][] Paths => m_paths;
+
+        public int[][] PathIndices => m_pathIndices;
+
+        public void Simulate()
         {
-            var paths = new double[NbTimes][];
+            m_grid = new double[NbTimes][];
+            m_paths = new double[NbTimes][];
+            m_pathIndices = new int[NbTimes][];
 
             for (int iTime = 0; iTime < NbTimes; iTime++)
             {
-                paths[iTime] = new double[1] { m_path(iTime * m_dt) };
+                m_grid[iTime] = new double[1] { m_path(iTime * m_dt) };
+                m_paths[iTime] = new double[1] { m_path(iTime * m_dt) };
+                m_pathIndices[iTime] = new int[1] { 0 };
             }
-
-            return paths;
         }
 
         public (double[], int[]) TransitionProb(int iTime, int jS)

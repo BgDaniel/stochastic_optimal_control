@@ -34,6 +34,9 @@ namespace StochasticControl.CommandLineParser
         [Option('v', "Qmax", Required = true, HelpText = "Q max")]
         public double QMax { get; set; }
 
+        [Option('d', "Q0", Required = true, HelpText = "Q start")]
+        public double Q0 { get; set; }
+
         [Option('w', "deltaQmin", Required = true, HelpText = "q min")]
         public double DeltaQMin { get; set; }
 

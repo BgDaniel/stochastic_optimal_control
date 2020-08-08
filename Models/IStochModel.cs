@@ -9,8 +9,14 @@ namespace CalculationEngine
     {
         int NbTimes { get; }
 
+        double[][] Grid { get; }
+
+        double[][] Paths { get; }
+
+        int[][] PathIndices { get; }
+
         (double[], int[]) TransitionProb(int iTime, int jS);
 
-        double[][] Simulate();
+        void Simulate();
     }
 }

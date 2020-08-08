@@ -18,6 +18,8 @@ namespace CalculationEngine
         private int m_nbStepsQ;
         private double m_dQ;
         private IStochModel m_model;
+        private QSpace m_qSpace;
+        private OptimalValues[][][] m_optimalValues;
 
         public int[][] PathIndices { private set; get; }
 
@@ -28,8 +30,9 @@ namespace CalculationEngine
 
         public OptimalController(IStochModel model, QSpace qSpace)
         {
-            m_model = model;                      
+            m_model = model;
 
+            m_qSpace = qSpace;
             m_QMax = qSpace.QMax;
             m_QMin = qSpace.QMin;
             m_qMax = qSpace.DeltaQMax;
@@ -38,34 +41,33 @@ namespace CalculationEngine
             m_nbStepsQ = qSpace.NbStepsQ;
         }
 
-        public OptimalValues[][][] Control()
+        public void Control()
         {
             int nbTimes = m_model.NbTimes;
-            double[][] paths = m_model.Simulate();
-
-            var optimalValues = new OptimalValues[nbTimes][][];
+            m_optimalValues = new OptimalValues[nbTimes][][];
+            var grid = m_model.Grid;
 
             for (int iTime = 0; iTime < nbTimes; iTime++)
             {
-                optimalValues[iTime] = new OptimalValues[m_nbStepsQ][];
+                m_optimalValues[iTime] = new OptimalValues[m_nbStepsQ][];
 
-                var nbS = paths[iTime].Length;
+                var nbS = grid[iTime].Length;
 
                 for (int jQ = 0; jQ < m_nbStepsQ; jQ++)
-                    optimalValues[iTime][jQ] = new OptimalValues[nbS];                
+                    m_optimalValues[iTime][jQ] = new OptimalValues[nbS];                
             }
 
-            var nbSLast = paths[nbTimes - 1].Length;
+            var nbSLast = grid[nbTimes - 1].Length;
 
             for (int jQ = 0; jQ < m_nbStepsQ; jQ++)
             {
                 for (int iS = 0; iS < nbSLast; iS++)
-                    optimalValues[nbTimes - 1][jQ][iS] = new OptimalValues(.0, null, null, null);                
+                    m_optimalValues[nbTimes - 1][jQ][iS] = new OptimalValues(.0, .0, null, null, .0);                
             }
             
             for (int iTime = nbTimes - 2; iTime > 0; iTime--)
             {
-                for (int jS = 0; jS < paths[iTime].Length; jS++)
+                for (int jS = 0; jS < grid[iTime].Length; jS++)
                 {
                     (var transitionProb, var sNext) = m_model.TransitionProb(iTime, jS);
 
@@ -79,26 +81,54 @@ namespace CalculationEngine
                                 nextQs.Add(lQ);                            
                         }
 
-                        var optimalStep = new OptimalValues(double.MinValue, null, null, null);
+                        var optimalStep = new OptimalValues(double.MinValue, .0, null, null, .0);
 
                         foreach (var nextQ in nextQs)
                         {
                             var expectation = .0;
 
                             for(int l = 0; l < sNext.Length; l++)
-                                expectation += transitionProb[l] * optimalValues[iTime + 1][nextQ][sNext[l]].Value;
+                                expectation += transitionProb[l] * m_optimalValues[iTime + 1][nextQ][sNext[l]].Value;
 
-                            var value_next = - nextQ * m_dQ * paths[iTime][jS] + expectation;
+                            var value_next = - nextQ * m_dQ * grid[iTime][jS] + expectation;
                             
                             if (value_next > optimalStep.Value)
-                                optimalStep = new OptimalValues(value_next, m_qMin + nextQ * m_dQ, nextQ, (nextQ - kS) * m_dQ);                                                       
+                                optimalStep = new OptimalValues(value_next, m_qMin + m_qMin + kS * m_dQ, nextQ * m_dQ, nextQ, (nextQ - kS) * m_dQ);                                                       
                         }
 
-                        optimalValues[iTime][kS][jS] = optimalStep;
+                        m_optimalValues[iTime][kS][jS] = optimalStep;
                     }
                 }
             }
-            return optimalValues;
+        }
+
+        public (double[], double[], double[], double[]) RollOut(int iPath, double Q0)
+        {
+            var nbTimes = m_model.NbTimes;
+
+            var valueProcess = new double[nbTimes];
+            
+            var Q = new double[nbTimes];
+            Q[0] = Q0;
+            var indexQ = m_qSpace.Q(Q0);
+
+            var q = new double[nbTimes];
+            var S = m_model.Paths[iPath];
+            var pathIndices = m_model.PathIndices[iPath];
+
+            for(int iTime = 0; iTime < nbTimes; iTime++)
+            {
+                valueProcess[iTime] = m_optimalValues[iTime][indexQ][pathIndices[iTime]].Value;
+                
+                if(iTime != 0)
+                    Q[iTime] = m_optimalValues[iTime][indexQ][pathIndices[iTime]].Q;
+
+                q[iTime] = m_optimalValues[iTime][indexQ][pathIndices[iTime]].Dq;
+
+                indexQ = m_optimalValues[iTime][indexQ][pathIndices[iTime]].QIndexNext.Value;
+            }
+
+            return (valueProcess, Q, q, S);
         }
     }
 }

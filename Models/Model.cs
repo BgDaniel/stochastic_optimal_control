@@ -10,14 +10,22 @@ namespace Models
         protected int m_nbTimes;
         protected double m_dt;
         protected double m_S0;
+        protected double[][] m_grid;
+        protected double[][] m_paths;
+        protected int[][] m_pathIndices;
+        protected int m_nbSimu;
 
-        public BaseModel(double S0, int nbTimes, double T)
+        public int NbTimes => m_nbTimes;        
+
+        public BaseModel(double S0, int nbTimes, double T, int nbSimu)
         {
             m_S0 = S0;
             
             m_T = T;
             m_nbTimes = nbTimes;
             m_dt = T / nbTimes;
+
+            m_nbSimu = nbSimu;
         }
     }
 }
