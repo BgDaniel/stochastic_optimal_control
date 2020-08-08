@@ -9,8 +9,6 @@ namespace CalculationEngine
     {
         int NbTimes { get; }
 
-        IEnumerable<int> SNext(int jS, int iTime);
-
         (double[], int[]) TransitionProb(int iTime, int jS);
 
         double[][] Simulate();
