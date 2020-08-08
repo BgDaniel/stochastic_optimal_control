@@ -2,6 +2,7 @@
 using StochasticControl;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Text;
@@ -40,7 +41,7 @@ namespace CalculationEngine
         public OptimalValues[][][] Control()
         {
             int nbTimes = m_model.NbTimes;
-            double[][] paths = m_model.Paths;
+            double[][] paths = m_model.Simulate();
 
             var optimalValues = new OptimalValues[nbTimes][][];
 
@@ -54,18 +55,20 @@ namespace CalculationEngine
                     optimalValues[iTime][jQ] = new OptimalValues[nbS];                
             }
 
-            var nbSLast = paths[nbTimes].Length;
+            var nbSLast = paths[nbTimes - 1].Length;
 
             for (int jQ = 0; jQ < m_nbStepsQ; jQ++)
             {
                 for (int iS = 0; iS < nbSLast; iS++)
-                    optimalValues[nbTimes - 2][jQ][iS] = new OptimalValues(.0, null, null, null);                
+                    optimalValues[nbTimes - 1][jQ][iS] = new OptimalValues(.0, null, null, null);                
             }
             
             for (int iTime = nbTimes - 2; iTime > 0; iTime--)
             {
                 for (int jS = 0; jS < paths[iTime].Length; jS++)
                 {
+                    (var transitionProb, var sNext) = m_model.TransitionProb(iTime, jS);
+
                     for (int kS = 0; kS < m_nbStepsQ; kS++)
                     {
                         var nextQs = new List<int>();
@@ -82,8 +85,8 @@ namespace CalculationEngine
                         {
                             var expectation = .0;
 
-                            foreach(var mS in m_model.SNext(jS, iTime))
-                                expectation += m_model.TransitionProbability(iTime, jS, mS) * optimalValues[iTime + 1][nextQ][mS].Value;
+                            for(int l = 0; l < sNext.Length; l++)
+                                expectation += transitionProb[l] * optimalValues[iTime + 1][nextQ][sNext[l]].Value;
 
                             var value_next = - nextQ * m_dQ * paths[iTime][jS] + expectation;
                             

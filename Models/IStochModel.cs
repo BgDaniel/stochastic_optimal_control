@@ -11,9 +11,7 @@ namespace CalculationEngine
 
         IEnumerable<int> SNext(int jS, int iTime);
 
-        double TransitionProbability(int iTime, int jS, int kS);
-
-        double[][] Paths { get; }
+        (double[], int[]) TransitionProb(int iTime, int jS);
 
         double[][] Simulate();
     }

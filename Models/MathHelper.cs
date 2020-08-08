@@ -8,10 +8,15 @@ namespace Models
     {
         public static double Pow(this double x, int n)
         {
-            for (int i = 0; i < n; i++)
-                x *= x;
+            var _x = x;
 
-            return x;
+            if (n == 0)
+                return 1.0;
+
+            for (int i = 0; i < n - 1; i++)
+                _x *= x;
+
+            return _x;
         }
     }
 }

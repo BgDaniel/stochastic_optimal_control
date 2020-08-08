@@ -9,7 +9,6 @@ namespace Models
         private double m_T;
         protected int m_nbTimes;
         protected double m_dt;
-        protected double[][] m_paths;
         protected double m_S0;
 
         public BaseModel(double S0, int nbTimes, double T)
@@ -19,8 +18,6 @@ namespace Models
             m_T = T;
             m_nbTimes = nbTimes;
             m_dt = T / nbTimes;
-
-            m_paths = new double[nbTimes][];
         }
     }
 }

@@ -9,8 +9,8 @@ namespace StochasticControl.ExampleConfigs
     {
         public static Options Geom1 = new Options
         {
-            T = 2.0,
-            NbTimes = 200,
+            T = 3.0,
+            NbTimes = 256,
             Sigma = .3,
             S0 = 1.0,
             R = .02,

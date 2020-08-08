@@ -27,23 +27,22 @@ namespace CalculationEngine
             m_pU = (Math.Exp(m_r * m_dt) - Math.Exp(- m_sigma * Math.Sqrt(m_dt))) 
                 / (Math.Exp(+ m_sigma * Math.Sqrt(m_dt)) - Math.Exp(- m_sigma * Math.Sqrt(m_dt)));
             m_pD = 1.0 - m_pU;
-    }
-
-        public double[][] Paths => m_paths;           
+        }        
 
         public double[][] Simulate()
         {
-            m_paths[0] = new double[] { m_S0 };
+            var paths = new double[NbTimes][];
+            paths[0] = new double[] { m_S0 };
 
             for(int iTime = 1; iTime < NbTimes; iTime++)
             {
-                m_paths[iTime] = new double[iTime + 1];
+                paths[iTime] = new double[iTime + 1];
 
                 for (int jS = 0; jS < iTime + 1; jS++)
-                    m_paths[iTime][jS] = m_S0 * m_u.Pow(iTime - jS) * m_d.Pow(jS);
+                    paths[iTime][jS] = m_S0 * m_u.Pow(iTime - jS) * m_d.Pow(jS);
             }
 
-            return m_paths;
+            return paths;
         }
 
         public IEnumerable<int> SNext(int jS, int iTime)
@@ -52,14 +51,9 @@ namespace CalculationEngine
                 yield return jS + i;            
         }
 
-        public double TransitionProbability(int iTime, int jS, int kS)
+        public (double[], int[]) TransitionProb(int iTime, int jS)
         {
-            if (jS == kS)
-                return m_pU;
-            else if (jS + 1 == kS)
-                return m_pD;
-            else
-                return .0;
+            return (new double[] { m_pU, m_pD }, new int[] { jS, jS + 1});
         }
     }
 }
