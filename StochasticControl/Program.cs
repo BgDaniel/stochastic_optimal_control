@@ -15,17 +15,17 @@ namespace StochasticControl
 
         private static void Execute(Options options)
         {            
-            var gbm = new GeometricBrownianMotion(options.T, options.NbSteps, options.Sigma, options.S0, options.R, options.NbSimus);
-            var paths = gbm.Simulate();
+            var model = new BinomialTree();
 
-            var optimalController = new OptimalController(paths, options.NbDiscr, gbm, options.QMin, options.QMax, options.Qmin,
-                options.Qmax, options.StepsQ);
-            var pathIndices = optimalController.PathIndices;
-            var J = optimalController.Control();
+            var QSpace = options.CreateQSpace();
 
-            var rollOut = new RollOut(J, paths, pathIndices, gbm, 10, optimalController);
+            var optimalController = new OptimalController(model, QSpace);
+            
+            var optimalValues = optimalController.Control();
 
-            rollOut.WriteToFile("Z:\\csharp\\stochastic_optimal_control\\optimal_control\\paths_rolled_out", new List<int>() { 0 });
+
+
+            //rollOut.WriteToFile("Z:\\csharp\\stochastic_optimal_control\\optimal_control\\paths_rolled_out", new List<int>() { 0 });
         }
     }
 }

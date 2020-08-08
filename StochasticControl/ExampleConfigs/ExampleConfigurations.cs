@@ -18,9 +18,9 @@ namespace StochasticControl.ExampleConfigs
             NbDiscr = 100,
             QMin = .0,
             QMax = .5,
-            Qmin = - .1,
-            Qmax = +.15,
-            StepsQ = 100
+            DeltaQMin = - .1,
+            DeltaQMax = +.15,
+            NbStepsQ = 100
         };
     }
 }

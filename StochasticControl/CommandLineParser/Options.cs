@@ -34,13 +34,18 @@ namespace StochasticControl.CommandLineParser
         [Option('v', "Qmax", Required = true, HelpText = "Q max")]
         public double QMax { get; set; }
 
-        [Option('w', "qmin", Required = true, HelpText = "q min")]
-        public double Qmin { get; set; }
+        [Option('w', "deltaQmin", Required = true, HelpText = "q min")]
+        public double DeltaQMin { get; set; }
 
-        [Option('x', "qmax", Required = true, HelpText = "q max")]
-        public double Qmax { get; set; }
+        [Option('x', "DeltaQmax", Required = true, HelpText = "q max")]
+        public double DeltaQMax { get; set; }
 
         [Option('y', "StepsQ", Required = true, HelpText = "dQ")]
-        public int StepsQ { get; set; }
+        public int NbStepsQ { get; set; }
+
+        public QSpace CreateQSpace()
+        {
+            return new QSpace(QMin, QMax, DeltaQMin, DeltaQMax, NbStepsQ);
+        }
     }
 }

@@ -18,5 +18,7 @@ namespace CalculationEngine
         double TransitionProbability(int iTime, int jS, int kS);
 
         double[][] GridS { get; }
+
+        double[][] Simulate();
     }
 }

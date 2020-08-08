@@ -10,14 +10,14 @@ namespace StochasticControl
 {
     public class RollOut
     {
-        private CalculationEngine.OptimalStep[][][] m_J;
+        private CalculationEngine.OptimalValues[][][] m_J;
         private int[][] m_pathIndices;
         private double[][] m_paths;
         private GeometricBrownianMotion m_gbm;
         private int m_iQ0;
         private OptimalController m_optimalController;
 
-        public RollOut(CalculationEngine.OptimalStep[][][] J, double[][] paths, int[][] pathIndices, GeometricBrownianMotion gbm,
+        public RollOut(CalculationEngine.OptimalValues[][][] J, double[][] paths, int[][] pathIndices, GeometricBrownianMotion gbm,
             int iQ0, OptimalController optimalController)
         {
             m_J = J;

@@ -9,98 +9,93 @@ using System.Text;
 namespace CalculationEngine
 {
     public class OptimalController
-    {
-        private double[][] m_paths;        
-        private double m_Qmin;
-        private double m_Qmax;
-        private double m_qmin;
-        private double m_qmax;
-        private int m_stepsQ;
+    {     
+        private double m_QMin;
+        private double m_QMax;
+        private double m_qMin;
+        private double m_qMax;
+        private int m_nbStepsQ;
         private double m_dQ;
         private IStochModel m_model;
-        private QSpace m_qSpace;
 
         public int[][] PathIndices { private set; get; }
 
         public double Q(int iQ)
         {
-            return m_Qmin + iQ * m_dQ; 
+            return m_QMin + iQ * m_dQ; 
         }
 
-        public OptimalController(IStochModel model, QSpace qSpace, double[][] paths)
+        public OptimalController(IStochModel model, QSpace qSpace)
         {
-            m_model = model;
-            m_qSpace = qSpace;                       
-            m_paths = paths;
+            m_model = model;                      
+
+            m_QMax = qSpace.QMax;
+            m_QMin = qSpace.QMin;
+            m_qMax = qSpace.DeltaQMax;
+            m_qMin = qSpace.DeltaQMin;
+            m_dQ = qSpace.Dq;
+            m_nbStepsQ = qSpace.NbStepsQ;
         }
 
-        public OptimalStep[][][] Control()
+        public OptimalValues[][][] Control()
         {
             int nbSteps = m_model.NbSteps;
             double[][] S = m_model.GridS;
 
-            var J = new OptimalStep[nbSteps][][];
+            var optimalValues = new OptimalValues[nbSteps][][];
 
             for (int iTime = 0; iTime < nbSteps; iTime++)
             {
-                J[iTime] = new OptimalStep[m_stepsQ][];
+                optimalValues[iTime] = new OptimalValues[m_nbStepsQ][];
 
                 var nbS = m_model.S(iTime).Count();
 
-                for (int j_Q = 0; j_Q < m_stepsQ; j_Q++)
-                {
-                    J[iTime][j_Q] = new OptimalStep[nbS];
-                }
+                for (int jQ = 0; jQ < m_nbStepsQ; jQ++)
+                    optimalValues[iTime][jQ] = new OptimalValues[nbS];                
             }
 
             var nbSLast = m_model.S(nbSteps).Count();
 
-            for (int j_Q = 0; j_Q < m_stepsQ; j_Q++)
+            for (int jQ = 0; jQ < m_nbStepsQ; jQ++)
             {
-                for (int i_S = 0; i_S < nbSLast; i_S++)
-                {
-                    J[nbSteps - 2][j_Q][i_S] = new OptimalStep(.0, null, null, null);
-                }
+                for (int iS = 0; iS < nbSLast; iS++)
+                    optimalValues[nbSteps - 2][jQ][iS] = new OptimalValues(.0, null, null, null);                
             }
             
             for (int iTime = nbSteps - 2; iTime > 0; iTime--)
             {
                 for (int jS = 0; jS < m_model.S(iTime).Count(); jS++)
                 {
-                    for (int k_Q = 0; k_Q < m_stepsQ; k_Q++)
+                    for (int kS = 0; kS < m_nbStepsQ; kS++)
                     {
-                        var next_Qs = new List<int>();
+                        var nextQs = new List<int>();
 
-                        for (int l_Q = 0; l_Q < m_stepsQ; l_Q++)
+                        for (int lQ = 0; lQ < m_nbStepsQ; lQ++)
                         {
-                            if (m_qmin <= (l_Q - k_Q) * m_dQ && (l_Q - k_Q) * m_dQ <= m_qmax)
-                            {
-                                next_Qs.Add(l_Q);
-                            }
+                            if (m_qMin <= (lQ - kS) * m_dQ && (lQ - kS) * m_dQ <= m_qMax)
+                                nextQs.Add(lQ);                            
                         }
 
-                        var _J = new OptimalStep(double.MinValue, null, null, null);
+                        var optimalStep = new OptimalValues(double.MinValue, null, null, null);
 
-                        foreach (var next_Q in next_Qs)
+                        foreach (var nextQ in nextQs)
                         {
-                            var expect_J_next = .0;
+                            var expectation = .0;
 
                             foreach(var mS in m_model.SNext(iTime + 1))
-                                expect_J_next += m_model.TransitionProbability(iTime, jS, mS) * J[iTime + 1][next_Q][mS].Value;
+                                expectation += m_model.TransitionProbability(iTime, jS, mS) * optimalValues[iTime + 1][nextQ][mS].Value;
 
-                            var value_next = - next_Q * m_dQ * S[iTime][jS] + expect_J_next;
+                            var value_next = - nextQ * m_dQ * S[iTime][jS] + expectation;
                             
-                            if (value_next > _J.Value)
-                            {
-                                _J = new OptimalStep(value_next, m_qmin + next_Q * m_dQ, next_Q, (next_Q - k_Q) * m_dQ);
-                            }                            
+                            if (value_next > optimalStep.Value)
+                                optimalStep = new OptimalValues(value_next, m_qMin + nextQ * m_dQ, nextQ, (nextQ - kS) * m_dQ);                                                       
                         }
 
-                        J[iTime][k_Q][jS] = _J;
+                        optimalValues[iTime][kS][jS] = optimalStep;
                     }
                 }
             }
-            return J;
+            return optimalValues;
         }
     }
 }
