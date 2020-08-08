@@ -20,7 +20,7 @@ namespace StochasticControl
 
             for(int iQ = 0; iQ < NbStepsQ; iQ++)
             {
-                if (QMin + iQ * Dq <= _Q && _Q < QMax + iQ * Dq)
+                if (QMin + iQ * Dq <= _Q && _Q < QMin + (iQ + 1) * Dq)
                     return iQ;
             }
 

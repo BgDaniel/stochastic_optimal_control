@@ -13,11 +13,13 @@ namespace Models
         protected double[][] m_grid;
         protected double[][] m_paths;
         protected int[][] m_pathIndices;
-        protected int m_nbSimu;
+        protected int m_nbSimus;
 
-        public int NbTimes => m_nbTimes;        
+        public int NbTimes => m_nbTimes;
 
-        public BaseModel(double S0, int nbTimes, double T, int nbSimu)
+        public int NbSimus => m_nbSimus;
+
+        public BaseModel(double S0, int nbTimes, double T, int nbSimus)
         {
             m_S0 = S0;
             
@@ -25,7 +27,7 @@ namespace Models
             m_nbTimes = nbTimes;
             m_dt = T / nbTimes;
 
-            m_nbSimu = nbSimu;
+            m_nbSimus = nbSimus;
         }
     }
 }

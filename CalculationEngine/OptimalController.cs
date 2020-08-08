@@ -62,10 +62,10 @@ namespace CalculationEngine
             for (int jQ = 0; jQ < m_nbStepsQ; jQ++)
             {
                 for (int iS = 0; iS < nbSLast; iS++)
-                    m_optimalValues[nbTimes - 1][jQ][iS] = new OptimalValues(.0, .0, null, null, .0);                
+                    m_optimalValues[nbTimes - 1][jQ][iS] = new OptimalValues(.0, .0, .0, -1, .0);                
             }
             
-            for (int iTime = nbTimes - 2; iTime > 0; iTime--)
+            for (int iTime = nbTimes - 2; iTime > -1; iTime--)
             {
                 for (int jS = 0; jS < grid[iTime].Length; jS++)
                 {
@@ -81,7 +81,7 @@ namespace CalculationEngine
                                 nextQs.Add(lQ);                            
                         }
 
-                        var optimalStep = new OptimalValues(double.MinValue, .0, null, null, .0);
+                        var optimalStep = new OptimalValues(double.MinValue, .0, .0, -1, .0);
 
                         foreach (var nextQ in nextQs)
                         {
@@ -105,7 +105,6 @@ namespace CalculationEngine
         public (double[], double[], double[], double[]) RollOut(int iPath, double Q0)
         {
             var nbTimes = m_model.NbTimes;
-
             var valueProcess = new double[nbTimes];
             
             var Q = new double[nbTimes];
@@ -125,7 +124,7 @@ namespace CalculationEngine
 
                 q[iTime] = m_optimalValues[iTime][indexQ][pathIndices[iTime]].Dq;
 
-                indexQ = m_optimalValues[iTime][indexQ][pathIndices[iTime]].QIndexNext.Value;
+                indexQ = m_optimalValues[iTime][indexQ][pathIndices[iTime]].QIndexNext;
             }
 
             return (valueProcess, Q, q, S);

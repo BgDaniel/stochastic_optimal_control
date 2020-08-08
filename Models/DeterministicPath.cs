@@ -9,7 +9,7 @@ namespace Models
     {
         private Func<double, double> m_path;
 
-        public DeterministicPath(Func<double, double> path, int nbTimes, double T) : base(path(0), nbTimes, T, 0)
+        public DeterministicPath(Func<double, double> path, int nbTimes, double T) : base(path(0), nbTimes, T, 1)
         {
             m_path = path;
         }
@@ -23,14 +23,16 @@ namespace Models
         public void Simulate()
         {
             m_grid = new double[NbTimes][];
-            m_paths = new double[NbTimes][];
-            m_pathIndices = new int[NbTimes][];
+            m_paths = new double[NbSimus][];
+            m_paths[0] = new double[NbTimes];
+            m_pathIndices = new int[NbSimus][];
+            m_pathIndices[0] = new int[NbTimes];
 
             for (int iTime = 0; iTime < NbTimes; iTime++)
             {
                 m_grid[iTime] = new double[1] { m_path(iTime * m_dt) };
-                m_paths[iTime] = new double[1] { m_path(iTime * m_dt) };
-                m_pathIndices[iTime] = new int[1] { 0 };
+                m_paths[0][iTime] = m_path(iTime * m_dt);
+                m_pathIndices[0][iTime] = 0;
             }
         }
 

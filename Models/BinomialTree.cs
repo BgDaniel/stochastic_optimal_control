@@ -51,10 +51,10 @@ namespace CalculationEngine
                 for (int jS = 0; jS < iTime + 1; jS++)
                     m_grid[iTime][jS] = m_S0 * m_u.Pow(iTime - jS) * m_d.Pow(jS);
 
-                m_paths[iTime] = new double[m_nbSimu];
-                m_pathIndices[iTime] = new int[m_nbSimu];
+                m_paths[iTime] = new double[m_nbSimus];
+                m_pathIndices[iTime] = new int[m_nbSimus];
 
-                for (int iSimu = 0; iSimu < m_nbSimu; iSimu++)
+                for (int iSimu = 0; iSimu < m_nbSimus; iSimu++)
                 {
                     m_pathIndices[iTime][iSimu] = m_pathIndices[iTime-1][iSimu] + rnd.Next(0, 2);
                     m_paths[iTime][iSimu] = m_grid[iTime][m_pathIndices[iTime][iSimu]];
