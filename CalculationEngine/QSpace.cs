@@ -34,7 +34,7 @@ namespace StochasticControl
             DeltaQMin = _DeltaQMin;
             DeltaQMax = _DeltaQMax;
             NbStepsQ = nbStepsQ;
-            Dq = (_DeltaQMax - _DeltaQMin) / nbStepsQ;
+            Dq = (_QMax - _QMin) / nbStepsQ;
         }
     }
 }

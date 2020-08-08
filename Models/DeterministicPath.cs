@@ -20,6 +20,8 @@ namespace Models
 
         public int[][] PathIndices => m_pathIndices;
 
+        public double[] Times => m_times;
+
         public void Simulate()
         {
             m_grid = new double[NbTimes][];

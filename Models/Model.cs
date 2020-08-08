@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Models
@@ -14,6 +15,7 @@ namespace Models
         protected double[][] m_paths;
         protected int[][] m_pathIndices;
         protected int m_nbSimus;
+        protected double[] m_times;
 
         public int NbTimes => m_nbTimes;
 
@@ -26,6 +28,8 @@ namespace Models
             m_T = T;
             m_nbTimes = nbTimes;
             m_dt = T / nbTimes;
+
+            m_times = Enumerable.Range(0, m_nbTimes).Select(iT => iT * m_dt).ToArray();
 
             m_nbSimus = nbSimus;
         }

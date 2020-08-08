@@ -9,8 +9,8 @@ namespace StochasticControl.ExampleConfigs
     {
         public static Options Geom1 = new Options
         {
-            T = 3.0,
-            NbTimes = 256,
+            T = 1.0,
+            NbTimes = 100,
             Sigma = .3,
             S0 = 1.0,
             R = .02,
@@ -20,7 +20,7 @@ namespace StochasticControl.ExampleConfigs
             QMax = .5,
             Q0 = .2,
             DeltaQMin = - .1,
-            DeltaQMax = +.15,
+            DeltaQMax = +.12,
             NbStepsQ = 100
         };
     }

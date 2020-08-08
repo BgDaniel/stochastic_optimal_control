@@ -71,13 +71,13 @@ namespace CalculationEngine
                 {
                     (var transitionProb, var sNext) = m_model.TransitionProb(iTime, jS);
 
-                    for (int kS = 0; kS < m_nbStepsQ; kS++)
+                    for (int kQ = 0; kQ < m_nbStepsQ; kQ++)
                     {
                         var nextQs = new List<int>();
 
                         for (int lQ = 0; lQ < m_nbStepsQ; lQ++)
                         {
-                            if (m_qMin <= (lQ - kS) * m_dQ && (lQ - kS) * m_dQ <= m_qMax)
+                            if (m_qMin <= (lQ - kQ) * m_dQ && (lQ - kQ) * m_dQ <= m_qMax)
                                 nextQs.Add(lQ);                            
                         }
 
@@ -90,13 +90,13 @@ namespace CalculationEngine
                             for(int l = 0; l < sNext.Length; l++)
                                 expectation += transitionProb[l] * m_optimalValues[iTime + 1][nextQ][sNext[l]].Value;
 
-                            var value_next = - nextQ * m_dQ * grid[iTime][jS] + expectation;
+                            var value_next = - (nextQ - kQ)  * m_dQ * grid[iTime][jS] + expectation;
                             
                             if (value_next > optimalStep.Value)
-                                optimalStep = new OptimalValues(value_next, m_qMin + m_qMin + kS * m_dQ, nextQ * m_dQ, nextQ, (nextQ - kS) * m_dQ);                                                       
+                                optimalStep = new OptimalValues(value_next, m_QMin + kQ * m_dQ, m_QMin + nextQ * m_dQ, nextQ, (nextQ - kQ) * m_dQ);                                                       
                         }
 
-                        m_optimalValues[iTime][kS][jS] = optimalStep;
+                        m_optimalValues[iTime][kQ][jS] = optimalStep;
                     }
                 }
             }

@@ -8,6 +8,7 @@ namespace CalculationEngine
     public interface IStochModel
     {
         int NbTimes { get; }
+        double[] Times { get; }
 
         double[][] Grid { get; }
 
