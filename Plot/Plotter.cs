@@ -26,20 +26,23 @@ namespace Plot
 
         public void Plot()
         {
-            var plt = new PlotModel();
-            plt.Title = "Optimal Control";
+            var model = new PlotModel();
+            model.Title = "Optimal Control";
 
-            plt.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "Time" });
+            model.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "Time" });
 
-            plt.Series.Add(ToLineSeries(ValueProcess));
-            plt.Series.Add(ToLineSeries(Q));
-            plt.Series.Add(ToLineSeries(Dq));
-            plt.Series.Add(ToLineSeries(S));
+            model.Series.Add(ToLineSeries(ValueProcess, "optimal control value", OxyColors.Red));
+            model.Series.Add(ToLineSeries(Q, "total storag volume", OxyColors.Blue));
+            model.Series.Add(ToLineSeries(Dq, "change in storage volume", OxyColors.Green));
+            model.Series.Add(ToLineSeries(S, "underlying price", OxyColors.Orange));
         }
 
-        private LineSeries ToLineSeries(double[] values)
+        private LineSeries ToLineSeries(double[] values, string title, OxyColor color)
         {
-            var lineSeries = new LineSeries();
+            var lineSeries = new LineSeries() { 
+                Title = title,
+                Color = color
+            };
 
             for (int i = 0; i < NbTimes; i++)
                 lineSeries.Points.Add(new DataPoint(Times[i], values[i]));
