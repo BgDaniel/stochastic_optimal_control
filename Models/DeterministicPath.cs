@@ -22,9 +22,16 @@ namespace Models
 
         public double[] Times => m_times;
 
-        public void Simulate()
+        public void RollOutGrid()
         {
             m_grid = new double[NbTimes][];
+
+            for (int iTime = 0; iTime < NbTimes; iTime++)
+                m_grid[iTime] = new double[1] { m_path(iTime * m_dt) };
+        }
+
+        public void Simulate()
+        {
             m_paths = new double[NbSimus][];
             m_paths[0] = new double[NbTimes];
             m_pathIndices = new int[NbSimus][];
@@ -32,7 +39,6 @@ namespace Models
 
             for (int iTime = 0; iTime < NbTimes; iTime++)
             {
-                m_grid[iTime] = new double[1] { m_path(iTime * m_dt) };
                 m_paths[0][iTime] = m_path(iTime * m_dt);
                 m_pathIndices[0][iTime] = 0;
             }

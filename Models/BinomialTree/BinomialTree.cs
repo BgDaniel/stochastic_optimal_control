@@ -16,6 +16,30 @@ namespace CalculationEngine
         private double m_pU;
         private double m_pD;
 
+        public double R
+        {
+            set
+            {
+                m_r = value;
+            }
+            get
+            {
+                return m_r;
+            }
+        }
+
+        public double Sigma
+        {
+            set
+            {
+                m_sigma = value;
+            }
+            get
+            {
+                return m_sigma;
+            }
+        }
+
         public BinomialTree(double S0, int nbTimes, double T, double sigma, double r, int nbSimu) : base(S0, nbTimes, T, nbSimu)
         {
             m_sigma = sigma;
@@ -36,23 +60,28 @@ namespace CalculationEngine
 
         public double[] Times => m_times;
 
-        public void Simulate()
+        public void RollOutGrid()
         {
             m_grid = new double[NbTimes][];
             m_grid[0] = new double[] { m_S0 };
+
+            for (int iTime = 1; iTime < NbTimes; iTime++)
+            {
+                m_grid[iTime] = new double[iTime + 1];
+
+                for (int jS = 0; jS < iTime + 1; jS++)
+                    m_grid[iTime][jS] = m_S0 * m_u.Pow(iTime - jS) * m_d.Pow(jS);
+            }
+        }
+
+        public void Simulate()
+        {
+            RollOutGrid();
 
             m_paths = new double[NbSimus][];
             m_pathIndices = new int[NbSimus][];
 
             var rnd = new Random();
-
-            for(int iTime = 1; iTime < NbTimes; iTime++)
-            {
-                m_grid[iTime] = new double[iTime + 1];
-
-                for (int jS = 0; jS < iTime + 1; jS++)
-                    m_grid[iTime][jS] = m_S0 * m_u.Pow(iTime - jS) * m_d.Pow(jS);                                      
-            }
 
             for(int iSimu = 0; iSimu < NbSimus; iSimu++)
             {

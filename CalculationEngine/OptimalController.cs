@@ -28,6 +28,8 @@ namespace CalculationEngine
             return m_QMin + iQ * m_dQ; 
         }
 
+        public double[] Values0 => Enumerable.Range(0, m_qSpace.NbStepsQ).Select(iQ => m_optimalValues[0][iQ][0].Value).ToArray();
+
         public OptimalController(IStochModel model, QSpace qSpace)
         {
             m_model = model;
@@ -51,6 +53,9 @@ namespace CalculationEngine
             {
                 m_optimalValues[iTime] = new OptimalValues[m_nbStepsQ][];
 
+                if(grid == null)
+                    m_model.RollOutGrid();
+                
                 var nbS = grid[iTime].Length;
 
                 for (int jQ = 0; jQ < m_nbStepsQ; jQ++)

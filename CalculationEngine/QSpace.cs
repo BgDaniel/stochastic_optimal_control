@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace StochasticControl
@@ -12,6 +13,8 @@ namespace StochasticControl
         public double DeltaQMax { private set; get; }
         public int NbStepsQ { private set; get; }
         public double Dq { private set; get; }
+
+        public double[] Qs => Enumerable.Range(0, NbStepsQ).Select(iQ => QMin + iQ * Dq).ToArray();
 
         public int Q(double _Q)
         {

@@ -19,5 +19,7 @@ namespace CalculationEngine
         (double[], int[]) TransitionProb(int iTime, int jS);
 
         void Simulate();
+
+        void RollOutGrid();
     }
 }

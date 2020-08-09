@@ -34,7 +34,7 @@ namespace CalculationEngine
             {
                 m_pU[iTime] = (Math.Exp((m_r + m_drift(iTime * m_dt)) * m_dt) - Math.Exp(-m_sigma * Math.Sqrt(m_dt)))
                     / (Math.Exp(+m_sigma * Math.Sqrt(m_dt)) - Math.Exp(-m_sigma * Math.Sqrt(m_dt)));
-                m_pU[iTime] = 1.0 - m_pU[iTime];
+                m_pD[iTime] = 1.0 - m_pU[iTime];
             }
         }
 
@@ -46,15 +46,10 @@ namespace CalculationEngine
 
         public double[] Times => m_times;
 
-        public void Simulate()
+        public void RollOutGrid()
         {
             m_grid = new double[NbTimes][];
             m_grid[0] = new double[] { m_S0 };
-
-            m_paths = new double[NbSimus][];
-            m_pathIndices = new int[NbSimus][];
-
-            var rnd = new Random();
 
             for (int iTime = 1; iTime < NbTimes; iTime++)
             {
@@ -63,6 +58,16 @@ namespace CalculationEngine
                 for (int jS = 0; jS < iTime + 1; jS++)
                     m_grid[iTime][jS] = m_S0 * m_u.Pow(iTime - jS) * m_d.Pow(jS);
             }
+        }
+
+        public void Simulate()
+        {
+            RollOutGrid();
+
+            m_paths = new double[NbSimus][];
+            m_pathIndices = new int[NbSimus][];
+
+            var rnd = new Random();
 
             for (int iSimu = 0; iSimu < NbSimus; iSimu++)
             {

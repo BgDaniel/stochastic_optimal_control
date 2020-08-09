@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CalculationEngine\CalculationEngine.csproj" />
+    <ProjectReference Include="..\DistributionEvaluator\DistributionEvaluator.csproj" />
   </ItemGroup>
 
 </Project>

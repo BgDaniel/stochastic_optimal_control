@@ -8,23 +8,16 @@ using System.Windows;
 
 namespace StochasticControl
 {
-    public class FileWriter
+    public static class FileWriter
     {
-        public string FileName;
-
-        public FileWriter(string fileName)
-        {
-            FileName = fileName;
-        }
-
-        public void WriteToFile(QStep[] qSteps)
+        public static void WriteToFile(QStep[] qSteps, string fileName)
         {
             var engine = new FileHelperEngine<QStep>();
 
             string workingDirectory = Environment.CurrentDirectory;
             string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
 
-            var fullPath = Path.Combine(new string[] { projectDirectory, "Data", FileName });
+            var fullPath = Path.Combine(new string[] { projectDirectory, "Data", fileName });
             
             if (File.Exists(fullPath))
                 File.Delete(fullPath);
