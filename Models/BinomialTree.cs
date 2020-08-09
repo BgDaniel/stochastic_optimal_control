@@ -63,7 +63,12 @@ namespace CalculationEngine
 
                 for (int iTime = 1; iTime < NbTimes; iTime++)
                 {
-                    m_pathIndices[iSimu][iTime] = m_pathIndices[iSimu][iTime - 1] + rnd.Next(0, 2);
+                    var k = 0;
+
+                    if (rnd.NextDouble() <= m_pD)
+                        k = 1;
+
+                    m_pathIndices[iSimu][iTime] = m_pathIndices[iSimu][iTime - 1] + k;
                     m_paths[iSimu][iTime] = m_grid[iTime][m_pathIndices[iSimu][iTime]];
                 }
             }
