@@ -63,17 +63,17 @@ namespace DistributionEvaluator
                     var optimalController = new OptimalController(m_model, m_qSpace);
                     optimalController.Control();
                     
-                    var values0 = optimalController.Values0;
-
-                    WriteToFile(values0.ToArray(), String.Format("values0_{0}_{1}.csv", m_configurationSpace[iR][jSigma].Item1,
+                    var valueQs = optimalController.ValueQs;
+                    
+                    WriteToFile(valueQs, String.Format("values0_Q_{0}_{1}.csv", m_configurationSpace[iR][jSigma].Item1,
                         m_configurationSpace[iR][jSigma].Item2));
                 }
             }
         }
 
-        private void WriteToFile(double[] values0, string fileName)
+        private void WriteToFile(ValueQ[] valueQs, string fileName)
         {
-            var engine = new FileHelperEngine<DoubleValue>();
+            var engine = new FileHelperEngine<ValueQ>();
 
             string workingDirectory = Environment.CurrentDirectory;
             string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
@@ -84,23 +84,7 @@ namespace DistributionEvaluator
                 File.Delete(fullPath);
 
             engine.HeaderText = engine.GetFileHeader();
-            engine.WriteFile(fullPath, values0.Select(value => new DoubleValue(value)));
-        }
-    }
-
-    [DelimitedRecord(";")]
-    class DoubleValue
-    {
-        double Value;
-
-        public DoubleValue()
-        {
-
-        }
-
-        public DoubleValue(double value)
-        {
-            Value = value;
+            engine.WriteFile(fullPath, valueQs);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace CalculationEngine
             return m_QMin + iQ * m_dQ; 
         }
 
-        public double[] Values0 => Enumerable.Range(0, m_qSpace.NbStepsQ).Select(iQ => m_optimalValues[0][iQ][0].Value).ToArray();
+        public ValueQ[] ValueQs => Enumerable.Range(0, m_qSpace.NbStepsQ).Select(iQ => new ValueQ(m_optimalValues[0][iQ][0].Value, m_QMin + iQ * m_dQ)).ToArray();
 
         public OptimalController(IStochModel model, QSpace qSpace)
         {
@@ -47,14 +47,15 @@ namespace CalculationEngine
         {
             int nbTimes = m_model.NbTimes;
             m_optimalValues = new OptimalValues[nbTimes][][];
+
+            if (m_model.Grid == null)
+                m_model.RollOutGrid();
+
             var grid = m_model.Grid;
 
             for (int iTime = 0; iTime < nbTimes; iTime++)
             {
                 m_optimalValues[iTime] = new OptimalValues[m_nbStepsQ][];
-
-                if(grid == null)
-                    m_model.RollOutGrid();
                 
                 var nbS = grid[iTime].Length;
 
