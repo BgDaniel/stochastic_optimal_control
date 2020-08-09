@@ -264,3 +264,6 @@ FakesAssemblies/
 
 # cvs files
 *.csv
+
+# json files
+.json

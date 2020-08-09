@@ -102,6 +102,16 @@ namespace CalculationEngine
             }
         }
 
+        public List<QStep[]> RollOut(List<int> iPaths, double Q0)
+        {
+            var qSteps = new List<QStep[]>();
+
+            foreach (var iPath in iPaths)
+                qSteps.Add(RollOut(iPath, Q0));
+
+            return qSteps;
+        }
+
         public QStep[] RollOut(int iPath, double Q0)
         {
             var nbTimes = m_model.NbTimes;
