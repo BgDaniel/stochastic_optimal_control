@@ -30,7 +30,7 @@ namespace StochasticControl
                 File.Delete(fullPath);
 
             engine.HeaderText = engine.GetFileHeader();
-            engine.AppendToFile(fullPath, qSteps);
+            engine.WriteFile(fullPath, qSteps);
         }
     }
 }
